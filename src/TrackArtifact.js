@@ -16,7 +16,9 @@ import {
   ModalBody,
   ModalHeader
 } from 'shards-react';
-
+import {
+  Link
+} from "react-router-dom";
 import {config} from './utils.js';
 import './index.css';
 
@@ -36,15 +38,15 @@ export default class TrackArtifact extends React.Component {
     return (
       <div>
         <Container className="main-container">
-        <Row>
-        <Col sm="12" md="12">
-        <NewTrack></NewTrack>
-        </Col>
-        <Col sm="12" md="12">
-        <hr/ ><br />
-        <TrackHistory></TrackHistory>
-        </Col>
-        </Row>
+          <Row>
+            <Col sm="12" md="12">
+              <NewTrack></NewTrack>
+            </Col>
+            <Col sm="12" md="12">
+              <hr/ ><br />
+              <TrackHistory></TrackHistory>
+            </Col>
+          </Row>
         </Container>
       </div>
     );
@@ -63,36 +65,36 @@ class NewTrack extends React.Component {
   }
   render(){
     return(
-          <div>
-          <h3>Enter The Item Hash You Want To Track :- </h3>
-          <Row>
+      <div>
+        <h3>Enter The Item Hash You Want To Track :- </h3>
+        <Row>
           <Col sm="11" md="11">
-          <FormInput placeholder="Item Hash" />
+            <FormInput placeholder="Item Hash" />
           </Col>
           <Col sm="1" md="1">
-          <Button onClick={this.toggle}>Track</Button>
+            <Button onClick={this.toggle}>Track</Button>
           </Col>
-          </Row>
-          <Collapse open={this.state.collapse}>
-            <div className="p-3 mt-3 border rounded">
-              <h5>😍 Now you see me!</h5>
-              <span>
-                In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
-                Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
-                facilisis.
-                In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
-                Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
-                facilisis.
-                In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
-                Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
-                facilisis.
-                In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
-                Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
-                facilisis.
-              </span>
-            </div>
-          </Collapse>
+        </Row>
+        <Collapse open={this.state.collapse}>
+          <div className="p-3 mt-3 border rounded">
+            <h5>😍 Now you see me!</h5>
+            <span>
+              In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
+              Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
+              facilisis.
+              In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
+              Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
+              facilisis.
+              In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
+              Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
+              facilisis.
+              In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
+              Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
+              facilisis.
+            </span>
           </div>
+        </Collapse>
+      </div>
     );
   }
 }
@@ -113,7 +115,7 @@ class TrackHistory extends React.Component {
       console.log(txts);
       this.setState({history: txts.transactions})
     })().catch(e => {
-        console.log(e);
+      console.log(e);
     });
   }
 
@@ -124,36 +126,37 @@ class TrackHistory extends React.Component {
   render(){
     const { open } = this.state;
     const listItems = this.state.history.map((item) =>
-      <li key={Math.random()} className="list-items-artifacts">
-        <Modal size="lg" open={open} toggle={this.toggle}>
-          <ModalHeader>Header</ModalHeader>
-          <ModalBody>👋 Hello there!</ModalBody>
-        </Modal>
+    <li key={Math.random()} className="list-items-artifacts">
       <Card>
-      <CardHeader>Latest Hash :-{item.type} </CardHeader>
-      <CardBody>
-        <p>Item Name :- </p>
-        <p>Item Current Location :- </p>
-        <Button onClick={this.toggle}>See More</Button>
-        <Collapse open={this.state.collapse}>
-          <div className="p-3 mt-3 border rounded">
-            <h5>😍 Now you see me!</h5>
-            <span>
-              In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
-              Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
-              facilisis.
-            </span>
-          </div>
-        </Collapse>
-      </CardBody>
-    </Card>
-    <br />
+        <CardHeader>Latest Hash :-{item.type} </CardHeader>
+        <CardBody>
+          <p>Item Name :- </p>
+          <p>Item Current Location :- </p>
+          <Button><Link to={{
+              pathname: '/artifact-details/' + item.tx,
+              state: {
+                item: item
+              }
+            }}>See More</Link></Button>
+            <Collapse open={this.state.collapse}>
+              <div className="p-3 mt-3 border rounded">
+                <h5>😍 Now you see me!</h5>
+                <span>
+                  In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
+                  Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
+                  facilisis.
+                </span>
+              </div>
+            </Collapse>
+          </CardBody>
+        </Card>
+        <br />
       </li>
     )
     console.log('This is render ');
     console.log(this.state.history);
     return(
-        <div>
+      <div>
         <h3>Previously Created Artifacts</h3><hr/> <br />
         {listItems}
       </div>

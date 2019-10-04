@@ -73,7 +73,7 @@ export default class NavExample extends React.Component {
           </Nav>
 
           <Nav navbar className="ml-auto">
-            <span className="wallet-address">Wallet Address :- IE4C3BNWT4EYKPUZXGWDOOKBTJFVOYAZKBCWFYRC37U7BJKBIUH6NEB7SQ</span>
+
           </Nav>
         </Collapse>
       </Navbar>

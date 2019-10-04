@@ -15,6 +15,7 @@ import './index.css';
 import NavExample from './Navbar';
 import CreateArtifact from './CreateArtifact';
 import TrackArtifact from './TrackArtifact';
+import ArtifactDetails from './ArtifactDetails';
 
 import {config} from './utils.js'
 
@@ -29,7 +30,7 @@ const kmdclient = new algosdk.Kmd(config.token2, config.serverkmd, config.port2)
 class Main extends React.Component {
   constructor(props){
     super(props);
-    
+
 (async () => {
     let walletid = (await kmdclient.createWallet("MyTestWallet", "testpassword", "", "sqlite")).wallet.id;
     console.log("Created wallet.", walletid);
@@ -50,6 +51,7 @@ class Main extends React.Component {
       <HashRouter>
       <Route exact path="/" component={TrackArtifact}/>
         <Route path="/new-artifact" component={CreateArtifact}/>
+        <Route path="/artifact-details/:hash" component={ArtifactDetails}/>
       </HashRouter>
       </div>
     );

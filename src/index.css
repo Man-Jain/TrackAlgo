@@ -18,3 +18,7 @@
       height: 25rem;
     width: 100%;
 }
+
+button a {
+  color: white;
+}
