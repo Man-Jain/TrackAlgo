@@ -56,44 +56,28 @@ export default class TrackArtifact extends React.Component {
 class NewTrack extends React.Component {
   constructor(props) {
     super(props);
-    this.toggle = this.toggle.bind(this);
-    this.state = { collapse: false };
+    this.handleInput = this.handleInput.bind(this);
+    this.state = { collapse: false , itemId:''};
   }
 
-  toggle() {
-    this.setState({ collapse: !this.state.collapse });
+  handleInput(event) {
+    this.setState({itemId:event.target.value})
   }
+
   render(){
     return(
       <div>
-        <h3>Enter The Item Hash You Want To Track :- </h3>
+        <h3>Enter The Item ID You Want To Search :- </h3>
         <Row>
           <Col sm="11" md="11">
-            <FormInput placeholder="Item Hash" />
+            <FormInput onChange={this.handleInput} value={this.state.itemId} placeholder="Item Hash" />
           </Col>
           <Col sm="1" md="1">
-            <Button onClick={this.toggle}>Track</Button>
+            <Link to={{
+                pathname: '/artifact-details/' + this.state.itemId,
+              }}><Button>Search</Button></Link>
           </Col>
         </Row>
-        <Collapse open={this.state.collapse}>
-          <div className="p-3 mt-3 border rounded">
-            <h5>😍 Now you see me!</h5>
-            <span>
-              In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
-              Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
-              facilisis.
-              In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
-              Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
-              facilisis.
-              In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
-              Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
-              facilisis.
-              In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
-              Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
-              facilisis.
-            </span>
-          </div>
-        </Collapse>
       </div>
     );
   }
@@ -110,30 +94,22 @@ class TrackHistory extends React.Component {
   componentDidMount = async () => {
     (async() => {
       let params = await algodclient.getTransactionParams();
-      console.log(params);
       let txts = await algodclient.transactionByAddress( recoveredAccount.addr, params.lastRound- 1000 , params.lastRound );
-      console.log(txts);
-      const history = (txts.transactions).reverse();
-
+      let lastTransaction = txts.transactions[txts.transactions.length-1];
+      const obj = algosdk.decodeObj(lastTransaction.note);
+      console.log('last transaction obj');
+      console.log(obj);
       var items = []
-      for(let i = 0; i<history.length;i++){
-          const obj = algosdk.decodeObj(history[i].note);
-          if(obj.items){
-            let l = items.length;
-            console.log(obj);
-            for(let j=0;j<(obj.items).length;j++){
-              if(!items[items.length]){
-                console.log('lenght is');
-                console.log(items.length);
-                items[l] = [];
-              }
-              console.log('lenght is');
-              console.log(items.length);
-              items[l].push((obj.items)[j]);
-            }
+      if(obj.items){
+        for(let j=0;j<(obj.items).length;j++){
+          let l = items.length;
+          if(!items[items.length]){
+            items[l] = [];
           }
+          items[l].push((obj.items)[j]);
+        }
       }
-      console.log('Items is');
+      console.log('Items are');
       console.log(items);
       this.setState({history: items})
     })().catch(e => {
@@ -150,10 +126,10 @@ class TrackHistory extends React.Component {
     const listItems = this.state.history.map((item) =>
     <li key={Math.random()} className="list-items-artifacts">
       <Card>
-        <CardHeader>Item Id :- {item[0].id}</CardHeader>
+        <CardHeader><span class="bold-text">Item ID </span>:- {item[0].id}</CardHeader>
         <CardBody>
-          <p>Item Name :- {item[0].name}</p>
-          <p>Item Current Location :- {JSON.stringify (item[0].latlng)}</p>
+          <p><span class="bold-text">Item Name</span> :- {item[0].name}</p>
+          <p><span class="bold-text">Item Current Location</span> :- <a href={'http://www.google.com/maps/place/' + item[0].latlng.lat + ','  +item[0].latlng.lng}><Button theme="warning">Check on Maps</Button></a></p>
           <Link to={{
               pathname: '/artifact-details/' + item[0].id,
               state: {
@@ -175,11 +151,9 @@ class TrackHistory extends React.Component {
         <br />
       </li>
     )
-    console.log('This is render ');
-    console.log(this.state.history);
     return(
       <div>
-        <h3>Previously Created Artifacts</h3><hr/> <br />
+        <h3>Current Tracked Items</h3><hr/> <br />
         {listItems}
       </div>
     );

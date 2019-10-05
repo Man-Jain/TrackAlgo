@@ -35,9 +35,7 @@ export default class NewArtifact extends React.Component{
       lastTransactionNote: {items:[]},
     };
 
-    this.handleInput = this.handleInput.bind(this);
     this.addArtifact = this.addArtifact.bind(this);
-    this.handleInput = this.handleInput.bind(this);
     this.toggle = this.toggle.bind(this);
   }
   mapRef = React.createRef();
@@ -61,45 +59,34 @@ export default class NewArtifact extends React.Component{
     //get all transactions for an address for the last 1000 rounds
     let txts = (await algodclient.transactionByAddress( recoveredAccount.addr , params.lastRound - 1000, params.lastRound ));
     let lastTransaction = txts.transactions[txts.transactions.length-1];
-    console.log('The last Transaction is');
-    console.log(lastTransaction);
     this.setState({lastTransactionNote:algosdk.decodeObj(lastTransaction.note)})
-    console.log('This state has');
-    console.log(this.state.lastTransactionNote);
   }
 
   handleLocationFound = (e: Object) => {
     var data = {...this.state.data};
     data.latlng = e.latlng;
     this.setState({data:data, hasLocation:true});
-    console.log(this.state);
   }
 
   addArtifact(){
-    console.log('Clicking');
     var lastTransaction = {...this.state.lastTransactionNote};
     var lastTransactionItems = lastTransaction.items;
-
-    console.log('Last transaction Items');
+    console.log('Last Transaction Items');
     console.log(lastTransactionItems);
     let index;
     for(let i = 0; i<lastTransactionItems.length;i++){
-      console.log('This tranascion');
-      console.log(lastTransactionItems[i]);
         if (lastTransactionItems[i].id == this.props.match.params.itemid){
-          console.log(lastTransactionItems[i]);
-          console.log(this.props.match.params.itemid);
           index = i;
           break;
         }
     }
 
     lastTransactionItems[index].latlng = this.state.data.latlng;
-
+    lastTransaction.items = lastTransactionItems;
+    console.log(lastTransactionItems);
     (async() => {
       let params = await algodclient.getTransactionParams();
       let endRound = params.lastRound + parseInt(1000);
-      console.log(recoveredAccount.addr);
       let txn = {
         "from": recoveredAccount.addr,
         "to": recoveredAccount.addr,
@@ -123,19 +110,6 @@ export default class NewArtifact extends React.Component{
     });
   }
 
-  handleInput(event) {
-    const target = event.target;
-    if(target.name == "id"){
-      var data = {...this.state.data};
-      data.id = target.value + String(Math.random());
-      this.setState({data:data});
-    }
-    else {
-      var data = {...this.state.data};
-      data.name = target.value;
-      this.setState({data:data});
-    }
-  }
   render(){
     const marker = this.state.hasLocation ? (
       <Marker position={this.state.data.latlng}>
@@ -206,10 +180,10 @@ class TrackHistory extends React.Component {
 
       var items = []
       for(let i = 0; i<history.length;i++){
+        if(history[i].note){
           const obj = algosdk.decodeObj(history[i].note);
           if(obj.items){
             let l = items.length;
-            console.log(obj);
             for(let j=0;j<(obj.items).length;j++){
               if(obj.items[j] != null && (obj.items)[j].id == this.props.itemid){
                 if(!items[l]){
@@ -219,6 +193,7 @@ class TrackHistory extends React.Component {
               }
             }
           }
+        }
       }
       this.setState({history: items})
     })().catch(e => {
@@ -236,15 +211,13 @@ class TrackHistory extends React.Component {
       <li key={Math.random()} className="list-items-artifacts">
         <Modal size="lg" open={open} toggle={this.toggle}>
           <ModalHeader>Header</ModalHeader>
-            {console.log('This is asdf')}
-              {console.log(item)}
           <ModalBody>👋 Hello there!</ModalBody>
         </Modal>
         <Card>
-          <CardHeader>Item Id :- {item[0].id}</CardHeader>
+          <CardHeader><span class="bold-text">Item ID </span>:- {item[0].id}</CardHeader>
           <CardBody>
-            <p>Item Name :- {item[0].name}</p>
-            <p>Item Current Location :- <a href={'http://www.google.com/maps/place/' + item[0].latlng.lat + ','  +item[0].latlng.lng}>Maps</a></p>
+            <p><span class="bold-text">Item Name</span> :- {item[0].name}</p>
+            <p><span class="bold-text">Item Current Location</span> :- <a href={'http://www.google.com/maps/place/' + item[0].latlng.lat + ','  +item[0].latlng.lng}><Button theme="warning">Check on Maps</Button></a></p>
               <Collapse open={this.state.collapse}>
                 <div className="p-3 mt-3 border rounded">
                   <h5>😍 Now you see me!</h5>
@@ -264,11 +237,10 @@ class TrackHistory extends React.Component {
     const markers = this.state.history.map((item) =>
     <Marker position={[item[0].latlng.lat, item[0].latlng.lng]}>
       <Popup>
-        A pretty CSS3 popup. <br /> Easily customizable.
+        Item was here
       </Popup>
     </Marker>
     )
-    console.log(this.state.history);
 
     return(
         <div>

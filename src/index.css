@@ -22,3 +22,7 @@
 button a {
   color: white;
 }
+
+.bold-text {
+  font-weight: bold !important;
+}

@@ -56,30 +56,21 @@ export default class NewArtifact extends React.Component{
     //get all transactions for an address for the last 1000 rounds
     let txts = (await algodclient.transactionByAddress( recoveredAccount.addr , params.lastRound - 1000, params.lastRound ));
     let lastTransaction = txts.transactions[txts.transactions.length-1];
-    console.log('The last Transaction is');
-    console.log(lastTransaction);
     this.setState({lastTransactionNote:algosdk.decodeObj(lastTransaction.note)})
-    console.log('This state has');
-    console.log(this.state.lastTransactionNote);
   }
 
   handleLocationFound = (e: Object) => {
     var data = {...this.state.data};
     data.latlng = e.latlng;
     this.setState({data:data, hasLocation:true});
-    console.log(this.state);
   }
 
   addArtifact(){
-    console.log('Clicking');
     var lastTransaction = {...this.state.lastTransactionNote};
-    console.log('tHIS IS LAST TRANSACITON');
-    console.log(lastTransaction);
     lastTransaction.items.push(this.state.data);
     (async() => {
       let params = await algodclient.getTransactionParams();
       let endRound = params.lastRound + parseInt(1000);
-      console.log(recoveredAccount.addr);
       let txn = {
         "from": recoveredAccount.addr,
         "to": recoveredAccount.addr,
@@ -107,7 +98,7 @@ export default class NewArtifact extends React.Component{
     const target = event.target;
     if(target.name == "id"){
       var data = {...this.state.data};
-      data.id = target.value + String(Math.random());
+      data.id = target.value + String(Math.random().toString(36).substring(7));
       this.setState({data:data});
     }
     else {

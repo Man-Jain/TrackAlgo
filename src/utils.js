@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
   const config = {
-    mnemonic : "voice banner fancy margin manage multiply call grape crumble brief toss donor young tag arena gaze nasty page wisdom park antenna grocery icon absorb fat",
+    mnemonic : "ankle symptom tenant estate acoustic swarm extend uphold rescue code must exhaust lyrics client skill tray stuff undo original atom stairs ten pole abandon uncle",
     server : " https://testnet-algorand.api.purestake.io/ps1",
     port : "",
     token: {
