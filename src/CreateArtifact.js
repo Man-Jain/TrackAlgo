@@ -27,7 +27,7 @@ export default class NewArtifact extends React.Component{
       hasLocation: false,
       open: false,
       txhash: '',
-      lastTransactionNote: '',
+      lastTransactionNote: {items:[]},
     };
 
     this.handleInput = this.handleInput.bind(this);
@@ -72,6 +72,10 @@ export default class NewArtifact extends React.Component{
 
   addArtifact(){
     console.log('Clicking');
+    var lastTransaction = {...this.state.lastTransactionNote};
+    console.log('tHIS IS LAST TRANSACITON');
+    console.log(lastTransaction);
+    lastTransaction.items.push(this.state.data);
     (async() => {
       let params = await algodclient.getTransactionParams();
       let endRound = params.lastRound + parseInt(1000);
@@ -85,7 +89,7 @@ export default class NewArtifact extends React.Component{
         "lastRound": endRound,
         "genesisID": params.genesisID,
         "genesisHash": params.genesishashb64,
-        "note": algosdk.encodeObj(this.state.data),
+        "note": algosdk.encodeObj(lastTransaction),
       };
       let signedTxn = algosdk.signTransaction(txn, recoveredAccount.sk);
       let tx = (await postalgodclient.sendRawTransaction(signedTxn.blob));
@@ -103,7 +107,7 @@ export default class NewArtifact extends React.Component{
     const target = event.target;
     if(target.name == "id"){
       var data = {...this.state.data};
-      data.id = target.value;
+      data.id = target.value + String(Math.random());
       this.setState({data:data});
     }
     else {

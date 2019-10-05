@@ -113,7 +113,29 @@ class TrackHistory extends React.Component {
       console.log(params);
       let txts = await algodclient.transactionByAddress( recoveredAccount.addr, params.lastRound- 1000 , params.lastRound );
       console.log(txts);
-      this.setState({history: txts.transactions})
+      const history = (txts.transactions).reverse();
+
+      var items = []
+      for(let i = 0; i<history.length;i++){
+          const obj = algosdk.decodeObj(history[i].note);
+          if(obj.items){
+            let l = items.length;
+            console.log(obj);
+            for(let j=0;j<(obj.items).length;j++){
+              if(!items[items.length]){
+                console.log('lenght is');
+                console.log(items.length);
+                items[l] = [];
+              }
+              console.log('lenght is');
+              console.log(items.length);
+              items[l].push((obj.items)[j]);
+            }
+          }
+      }
+      console.log('Items is');
+      console.log(items);
+      this.setState({history: items})
     })().catch(e => {
       console.log(e);
     });
@@ -128,16 +150,16 @@ class TrackHistory extends React.Component {
     const listItems = this.state.history.map((item) =>
     <li key={Math.random()} className="list-items-artifacts">
       <Card>
-        <CardHeader>Latest Hash :-{item.type} </CardHeader>
+        <CardHeader>Item Id :- {item[0].id}</CardHeader>
         <CardBody>
-          <p>Item Name :- </p>
-          <p>Item Current Location :- </p>
-          <Button><Link to={{
-              pathname: '/artifact-details/' + item.tx,
+          <p>Item Name :- {item[0].name}</p>
+          <p>Item Current Location :- {JSON.stringify (item[0].latlng)}</p>
+          <Link to={{
+              pathname: '/artifact-details/' + item[0].id,
               state: {
                 item: item
               }
-            }}>See More</Link></Button>
+            }}><Button>See More</Button></Link>
             <Collapse open={this.state.collapse}>
               <div className="p-3 mt-3 border rounded">
                 <h5>😍 Now you see me!</h5>
