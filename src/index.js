@@ -46,6 +46,9 @@ class Main extends React.Component {
     console.log(e);
 });
   }
+  componentDidMount(){
+   document.title = "TrackAlgo"
+ }
   render(){
     return(
       <div>
@@ -54,7 +57,6 @@ class Main extends React.Component {
         <Route exact path="/" component={TrackArtifact}/>
         <Route path="/new-artifact" component={CreateArtifact}/>
         <Route path="/search" component={TrackSection}/>
-        <Route path="/search-artifact/:itemid" component={SearchArtifact}/>
         <Route path="/artifact-details/:itemid" component={ArtifactDetails}/>
       </HashRouter>
       <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css" />

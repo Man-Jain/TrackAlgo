@@ -71,7 +71,7 @@ class NewTrack extends React.Component {
           </Col>
           <Col sm="1" md="1">
             <Link to={{
-                pathname: '/artifact-search/' + this.state.itemId,
+                pathname: '/artifact-details/' + this.state.itemId,
               }}><Button>Search</Button></Link>
           </Col>
         </Row>

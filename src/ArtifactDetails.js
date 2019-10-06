@@ -2,7 +2,7 @@ import React from "react";
 import {Badge, Modal, ModalHeader, ModalBody, Collapse,Container,Row, FormInput, Button,Col, Card,CardHeader,CardTitle,CardBody,CardFooter, } from "shards-react";
 import {config, options} from './utils.js';
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,ResponsiveContainer
 } from 'recharts';
 import { Map, TileLayer, Marker, Popup, Circle,FeatureGroup,LayerGroup,LayersControl,Rectangle,} from 'react-leaflet';
 console.log(config.mnemonic);
@@ -314,14 +314,16 @@ class TrackHistory extends React.Component {
         {listItems}
         <br/>
         <h3>Temperature Changes</h3><br />
-        <LineChart width={600} height={300} data={data}>
-         <CartesianGrid strokeDasharray="3 3"/>
-         <Tooltip />
-          <XAxis />
-          <Legend />
-          <YAxis />
-         <Line type="monotone" dataKey="Temp" stroke="#8884d8" strokeWidth={2} />
-        </LineChart>
+          <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={data}>
+           <CartesianGrid strokeDasharray="3 3"/>
+           <Tooltip />
+            <XAxis />
+            <Legend />
+            <YAxis />
+           <Line type="monotone" dataKey="Temp" stroke="#8884d8" strokeWidth={2} />
+          </LineChart>
+            </ResponsiveContainer>
       </div>
     );
   }
