@@ -15,6 +15,10 @@ const kmdclient = new algosdk.Kmd(config.token2, config.serverkmd, config.port2)
 export default class NewArtifact extends React.Component{
   constructor(props){
     super(props);
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date+' '+time;
     this.state = {
       data: {
         id: '',
@@ -23,6 +27,8 @@ export default class NewArtifact extends React.Component{
           lat: 51.505,
           lng: -0.09,
         },
+        temp: Math.floor((Math.random() * 60) + 1),
+        timestamp: dateTime,
       },
       hasLocation: false,
       open: false,

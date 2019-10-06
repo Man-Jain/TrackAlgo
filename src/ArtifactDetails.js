@@ -1,6 +1,9 @@
 import React from "react";
-import {Modal, ModalHeader, ModalBody, Collapse,Container,Row, FormInput, Button,Col, Card,CardHeader,CardTitle,CardBody,CardFooter, } from "shards-react";
-import {config} from './utils.js'
+import {Badge, Modal, ModalHeader, ModalBody, Collapse,Container,Row, FormInput, Button,Col, Card,CardHeader,CardTitle,CardBody,CardFooter, } from "shards-react";
+import {config, options} from './utils.js';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+} from 'recharts';
 import { Map, TileLayer, Marker, Popup, Circle,FeatureGroup,LayerGroup,LayersControl,Rectangle,} from 'react-leaflet';
 console.log(config.mnemonic);
 
@@ -15,7 +18,6 @@ const kmdclient = new algosdk.Kmd(config.token2, config.serverkmd, config.port2)
 const { BaseLayer, Overlay } = LayersControl
 
 const center = [51.505, -0.09]
-const rectangle = [[51.49, -0.08], [51.5, -0.06]]
 
 export default class NewArtifact extends React.Component{
   constructor(props){
@@ -28,11 +30,14 @@ export default class NewArtifact extends React.Component{
           lat: 51.505,
           lng: -0.09,
         },
+        temp: Math.floor((Math.random() * 60) + 1),
+        timestamp: '',
       },
       hasLocation: false,
       open: false,
       txhash: '',
       lastTransactionNote: {items:[]},
+      reload: true,
     };
 
     this.addArtifact = this.addArtifact.bind(this);
@@ -80,8 +85,16 @@ export default class NewArtifact extends React.Component{
           break;
         }
     }
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date+' '+time;
+    var temp = Math.floor((Math.random() * 60) + 1);
 
     lastTransactionItems[index].latlng = this.state.data.latlng;
+    lastTransactionItems[index].timestamp = dateTime;
+    lastTransactionItems[index].temp = temp;
+
     lastTransaction.items = lastTransactionItems;
     console.log(lastTransactionItems);
     (async() => {
@@ -103,7 +116,7 @@ export default class NewArtifact extends React.Component{
 
       this.setState({txhash: tx.txId});
       this.setState({
-      open: !this.state.open
+      open: !this.state.open, reload:false,
       });
     })().catch(e => {
       console.log(e);
@@ -126,7 +139,7 @@ export default class NewArtifact extends React.Component{
 
         <Row>
           <Col sm="12" md="6">
-            <TrackHistory itemid={this.props.match.params.itemid}></TrackHistory>
+            <TrackHistory reload={this.state.reload} itemid={this.props.match.params.itemid}></TrackHistory>
           </Col>
           <br/>
           <Col sm="12" md="6">
@@ -169,9 +182,11 @@ class TrackHistory extends React.Component {
         lat: 51.505,
         lng: -0.09,
       },
-    }]], open: false};
+    }]], open: false, reload: this.props.reload, options: {}};
   }
-
+  static getDerivedStateFromProps(props, state) {
+  return { reload: props.reload };
+  }
   componentDidMount = async () => {
     (async() => {
       let params = await algodclient.getTransactionParams();
@@ -184,6 +199,7 @@ class TrackHistory extends React.Component {
           const obj = algosdk.decodeObj(history[i].note);
           if(obj.items){
             let l = items.length;
+            if(i==0){
             for(let j=0;j<(obj.items).length;j++){
               if(obj.items[j] != null && (obj.items)[j].id == this.props.itemid){
                 if(!items[l]){
@@ -191,14 +207,39 @@ class TrackHistory extends React.Component {
                 }
                 items[l].push((obj.items)[j]);
               }
+              }
+            }
+            else {
+              const objprev = algosdk.decodeObj(history[i-1].note);
+              for(let j=0;j<(obj.items).length;j++){
+                if(obj.items[j] != null && (obj.items)[j].id == this.props.itemid && !((obj.items)[j].timestamp ===  (objprev.items)[j].timestamp)){
+                  if(!items[l]){
+                    items[l] = [];
+                  }
+                  items[l].push((obj.items)[j]);
+                }
+                }
             }
           }
         }
       }
+      console.log('This is Items ');
+      console.log(items);
       this.setState({history: items})
     })().catch(e => {
         console.log(e);
     });
+
+    function getdata(item){
+      console.log('Per Item');
+      console.log(item);
+      if(item[0].timestamp){
+        let hour = item[0].timestamp.split(' ')[1].split(':')[0]
+        return {x:parseInt(hour),y:item[0].temp,}
+      }
+    }
+
+    const data  = this.state.history.map(getdata);
   }
 
   toggle() {
@@ -216,8 +257,11 @@ class TrackHistory extends React.Component {
         <Card>
           <CardHeader><span class="bold-text">Item ID </span>:- {item[0].id}</CardHeader>
           <CardBody>
+            <Badge className="timestamp" pill theme="secondary">
+              {item[0].timestamp}
+            </Badge>
             <p><span class="bold-text">Item Name</span> :- {item[0].name}</p>
-            <p><span class="bold-text">Item Current Location</span> :- <a href={'http://www.google.com/maps/place/' + item[0].latlng.lat + ','  +item[0].latlng.lng}><Button theme="warning">Check on Maps</Button></a></p>
+            <p><span class="bold-text">Item Current Location</span> :- <a href={'http://www.google.com/maps/place/' + item[0].latlng.lat + ','  +item[0].latlng.lng}><Badge theme="warning">Check on Maps</Badge></a></p>
               <Collapse open={this.state.collapse}>
                 <div className="p-3 mt-3 border rounded">
                   <h5>😍 Now you see me!</h5>
@@ -242,6 +286,19 @@ class TrackHistory extends React.Component {
     </Marker>
     )
 
+    function getdata(item){
+      console.log('Per Item');
+      console.log(item);
+      if(item[0].timestamp){
+        let hour = item[0].timestamp.split(' ')[1].split(':')[0]
+        return {time:parseInt(hour),Temp:item[0].temp,}
+      }
+    }
+
+    const data  = this.state.history.map(getdata);
+    console.log('Data is');
+    console.log(data);
+
     return(
         <div>
         <h3>Tracking History</h3><hr/> <br />
@@ -256,6 +313,15 @@ class TrackHistory extends React.Component {
         <h3>Tracking Overview</h3><hr/> <br />
         {listItems}
         <br/>
+        <h3>Temperature Changes</h3><br />
+        <LineChart width={600} height={300} data={data}>
+         <CartesianGrid strokeDasharray="3 3"/>
+         <Tooltip />
+          <XAxis />
+          <Legend />
+          <YAxis />
+         <Line type="monotone" dataKey="Temp" stroke="#8884d8" strokeWidth={2} />
+        </LineChart>
       </div>
     );
   }

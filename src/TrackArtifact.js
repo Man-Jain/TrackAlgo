@@ -14,7 +14,8 @@ import {
   CardHeader,
   Modal,
   ModalBody,
-  ModalHeader
+  ModalHeader,
+  Badge
 } from 'shards-react';
 import {
   Link
@@ -128,8 +129,11 @@ class TrackHistory extends React.Component {
       <Card>
         <CardHeader><span class="bold-text">Item ID </span>:- {item[0].id}</CardHeader>
         <CardBody>
+          <Badge className="timestamp" pill theme="secondary">
+            {item[0].timestamp}
+          </Badge>
           <p><span class="bold-text">Item Name</span> :- {item[0].name}</p>
-          <p><span class="bold-text">Item Current Location</span> :- <a href={'http://www.google.com/maps/place/' + item[0].latlng.lat + ','  +item[0].latlng.lng}><Button theme="warning">Check on Maps</Button></a></p>
+          <p><span class="bold-text">Item Current Location</span> :- <a href={'http://www.google.com/maps/place/' + item[0].latlng.lat + ','  +item[0].latlng.lng}><Badge theme="warning">Check on Maps</Badge></a></p>
           <Link to={{
               pathname: '/artifact-details/' + item[0].id,
               state: {

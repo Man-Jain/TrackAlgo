@@ -26,3 +26,7 @@ button a {
 .bold-text {
   font-weight: bold !important;
 }
+
+.timestamp {
+  float: right;
+}

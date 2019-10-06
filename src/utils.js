@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
   const config = {
-    mnemonic : "ankle symptom tenant estate acoustic swarm extend uphold rescue code must exhaust lyrics client skill tray stuff undo original atom stairs ten pole abandon uncle",
+    mnemonic : "damp rapid network trumpet dog story portion ten neglect kick search other device park gaze define deposit either pet between giant school helmet absent there",
     server : " https://testnet-algorand.api.purestake.io/ps1",
     port : "",
     token: {
@@ -15,6 +15,7 @@ const crypto = require('crypto');
     port2: 25856,
     token2: '48fb9b4267aee2196f152cf4fae1eba2fa6798c82b9af8da96a8519d67980f74'
   };
+
 
 function encrypt(text){
   var cipher = crypto.createCipher('aes-256-cbc',config.mnemonic);
