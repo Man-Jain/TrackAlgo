@@ -16,6 +16,8 @@ import NavExample from './Navbar';
 import CreateArtifact from './CreateArtifact';
 import TrackArtifact from './TrackArtifact';
 import ArtifactDetails from './ArtifactDetails';
+import SearchArtifact from './SearchArtifact';
+import TrackSection from './TrackSection';
 
 import {config} from './utils.js'
 
@@ -49,8 +51,10 @@ class Main extends React.Component {
       <div>
       <NavExample />
       <HashRouter>
-      <Route exact path="/" component={TrackArtifact}/>
+        <Route exact path="/" component={TrackArtifact}/>
         <Route path="/new-artifact" component={CreateArtifact}/>
+        <Route path="/search" component={TrackSection}/>
+        <Route path="/search-artifact/:itemid" component={SearchArtifact}/>
         <Route path="/artifact-details/:itemid" component={ArtifactDetails}/>
       </HashRouter>
       <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css" />

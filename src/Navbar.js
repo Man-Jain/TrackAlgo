@@ -55,7 +55,7 @@ export default class NavExample extends React.Component {
       <div>
       <HashRouter>
       <Navbar type="dark" theme="success" expand="md">
-        <NavbarBrand href="#">Track Matic</NavbarBrand>
+        <NavbarBrand href="#">TrackAlgo</NavbarBrand>
         <NavbarToggler onClick={this.toggleNavbar} />
 
         <Collapse open={this.state.collapseOpen} navbar>

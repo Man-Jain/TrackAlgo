@@ -1,4 +1,35 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a platform where a person can track any material. The item details are put onto the algorand blockchain.
+
+The `note` field for any Algorand Transaction is used to store the details of the material.
+
+The project is generic i.e., It can be adapted for any use case. Currently it implements any item with an associated temperature.
+
+## Features
+
+### New Item
+- Any new item can be tracked by giving the appropriate details. [Home](https://frosty-kepler-77183e.netlify.com/new-artifact)
+- The site automatically takes the current location of the device to map with the item's Location
+- The temperature of the item is currenlty generated randomly but it can be taken from any IOT Device as input.
+
+### Tracked Items
+
+- List of all the items being tracked are listed with a few details, a complete history can be seen after clicking the card.
+- Shows the Id, Name, The latest location and the timestamp.
+- [List of all the Items Tracked](https://frosty-kepler-77183e.netlify.com/)
+
+### Item Details
+
+- Shows a tracking history of an item with all he coordinates, timestamp in a list form as well as on the map.
+- Shows a map of all the previous locations of an item.
+- Gives the option to update the location by taking the current location from the user.
+- Creates a page for every item like this https://frosty-kepler-77183e.netlify.com/:itemid
+- Shows a graph of the temperature changes of the item taken from the IOT Device.
+
+### Search Section
+
+- The end user can see the history of any item by typing the `Item ID` in the search bar.
+- He will be shown a similar details page with the overall location and temperature history.
+
 
 ## Available Scripts
 
