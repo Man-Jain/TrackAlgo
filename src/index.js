@@ -26,29 +26,42 @@ const algosdk = require('algosdk');
 var recoveredAccount = algosdk.mnemonicToSecretKey(config.mnemonic);
 
 let algodclient = new algosdk.Algod(config.token, config.server, config.port);
-const kmdclient = new algosdk.Kmd(config.token2, config.serverkmd, config.port2);
+let postalgodclient = new algosdk.Algod(config.ptoken, config.server, config.port);
 // -------------------------------------
 
 class Main extends React.Component {
   constructor(props){
     super(props);
-
-(async () => {
-    let walletid = (await kmdclient.createWallet("MyTestWallet", "testpassword", "", "sqlite")).wallet.id;
-    console.log("Created wallet.", walletid);
-
-    let wallethandle = (await kmdclient.initWalletHandle(walletid, "testpassword")).wallet_handle_token;
-    console.log("Got wallet handle.", wallethandle);
-
-    let address = (await kmdclient.generateKey(wallethandle)).address;
-    console.log("Created new account.", address);
-})().catch(e => {
-    console.log(e);
-});
   }
-  componentDidMount(){
-   document.title = "TrackAlgo"
- }
+  componentDidMount = async() => {
+   document.title = "TrackAlgo";
+   let params = await algodclient.getTransactionParams();
+   //get all transactions for an address for the last 1000 rounds
+   let txts = (await algodclient.transactionByAddress( recoveredAccount.addr , params.lastRound - 1000, params.lastRound ));
+   if(!txts){
+     console.log('No previous transaction found');
+     (async() => {
+       let params = await algodclient.getTransactionParams();
+       let endRound = params.lastRound + parseInt(1000);
+       let txn = {
+         "from": recoveredAccount.addr,
+         "to": recoveredAccount.addr,
+         "fee": 0,
+         "amount": 0,
+         "firstRound": params.lastRound,
+         "lastRound": endRound,
+         "genesisID": params.genesisID,
+         "genesisHash": params.genesishashb64,
+         "note": algosdk.encodeObj({items:[{id: 'FGYHJ56DCVHJasda',name: 'Paracetamol',latlng: {lat: 51.505,lng: -0.09,},temp: 34,timestamp: '2018-8-3 11:12:40'}]}),
+       };
+       let signedTxn = algosdk.signTransaction(txn, recoveredAccount.sk);
+       let tx = (await postalgodclient.sendRawTransaction(signedTxn.blob));
+       console.log(tx.txId);
+     })().catch(e => {
+       console.log(e);
+     });
+   }
+  }
   render(){
     return(
       <div>
