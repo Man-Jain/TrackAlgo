@@ -31,8 +31,6 @@ var recoveredAccount = algosdk.mnemonicToSecretKey(config.mnemonic);
 console.log(recoveredAccount.addr);
 let algodclient = new algosdk.Algod(config.token, config.server, config.port);
 let postalgodclient = new algosdk.Algod(config.ptoken, config.server, config.port);
-//const kmdclient = new algosdk.Kmd(config.token2, config.serverkmd, config.port2);
-
 
 export default class TrackArtifact extends React.Component {
   render() {
@@ -45,7 +43,7 @@ export default class TrackArtifact extends React.Component {
             </Col>
             <Col sm="12" md="12">
               <hr/ ><br />
-              <TrackHistory></TrackHistory>
+              <TrackHistory />
             </Col>
           </Row>
         </Container>
@@ -142,7 +140,7 @@ class TrackHistory extends React.Component {
             }}><Button>See More</Button></Link>
             <Collapse open={this.state.collapse}>
               <div className="p-3 mt-3 border rounded">
-                <h5>😍 Now you see me!</h5>
+                <h5>😍 Now you see me!!!</h5>
                 <span>
                   In sagittis nibh non arcu viverra, nec imperdiet quam suscipit.
                   Sed porta eleifend scelerisque. Vestibulum dapibus quis arcu a
